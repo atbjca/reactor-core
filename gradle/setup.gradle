@@ -24,7 +24,7 @@ apply plugin: 'maven-publish'
 
 jar {
 	manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
-	manifest.attributes["Implementation-Title"] = project.name
+	manifest.attributes["Implementation-Title"] = "bjca-footstone-beactor-" + project.name.replace("reactor-", "")
 	manifest.attributes["Implementation-Version"] = project.version
 }
 
@@ -90,29 +90,26 @@ task qualifyVersionGha() {
 publishing {
 	repositories {
 		maven {
-			name = "mock"
-			url = "${rootProject.layout.buildDirectory.get().asFile.toString()}/repo"
-		}
-		if (qualifyVersion("$version") == "RELEASE") {
-			maven {
-				name = "sonatype"
-				url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
-				credentials {
-					username findProperty("sonatypeUsername")
-					password findProperty("sonatypePassword")
-				}
+			name = "nexus"
+			url = version.toString().endsWith('-SNAPSHOT') ? (findProperty('nexusSnapshotUrl') ?: 'http://192.168.131.36:8088/repository/snapshots/') : (findProperty('nexusReleaseUrl') ?: 'http://192.168.131.36:8088/repository/releases/')
+			allowInsecureProtocol = true
+			credentials {
+				username findProperty("nexusUsername") ?: "admin"
+				password findProperty("nexusPassword") ?: ""
 			}
 		}
 	}
 
 	publications {
 		mavenJava(MavenPublication) {
+			artifactId = "bjca-footstone-beactor-" + project.name.replace("reactor-", "")
 			from components.java
 			artifact sourcesJar
 			artifact javadocJar
 			//consider adding extra artifacts here, conditionally on submodule's name and perhaps in an afterEvaluate block
 			afterEvaluate {
-				if (project.name == 'reactor-core') {
+				def excluded = gradle.startParameter.excludedTaskNames
+				if (project.name == 'reactor-core' && !excluded.contains('asciidoctor') && !excluded.contains('docsZip') && !excluded.contains('asciidoc')) {
 					artifact rootProject.tasks.docsZip
 				}
 				// note that reactor-tools has more involved stuff, so we kept it in the submodule's build:

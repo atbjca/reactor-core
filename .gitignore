@@ -25,3 +25,7 @@ exportToHtml
 .pmd
 .ruleset
 .rulesets
+.agent/
+.claude/
+.codex/
+.cursor/

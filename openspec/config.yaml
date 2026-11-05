@@ -1,0 +1,11 @@
+schema: spec-driven
+
+context: |
+  Project: Reactor Core (3.4.x-bjca-patch)
+  Tech stack: Java 8 (compilation target), Gradle 8.6, Reactive Streams, JUnit 5, AssertJ
+  Architecture: Reactive Streams implementation (Flux, Mono, Schedulers)
+  Conventions:
+    - Zero breaking changes to public Java APIs and package names (reactor.*)
+    - GAV coordinate rebranding: cn.bjca.footstone.reactor:bjca-footstone-reactor-*
+    - CVE normalization: 已修复, 免疫, 不适用, 修复中, 已缓解, 暂缓
+    - Complete openspec lifecycle tracking for all changes

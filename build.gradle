@@ -122,7 +122,7 @@ configure(subprojects) { p ->
 	apply from: "${rootDir}/gradle/setup.gradle"
 
 	description = 'Non-Blocking Reactive Foundation for the JVM'
-	group = 'io.projectreactor'
+	group = project.hasProperty('projectGroup') ? project.projectGroup : 'cn.bjca.footstone.reactor'
 
 	repositories {
 		mavenCentral()
